@@ -1,0 +1,30 @@
+<h2 style="color: black">Football team list</h2>
+
+<button routerLink="/createFootballTeam" routerLinkActive="active" class="btn btn-info">Create a football team</button>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Name</th>
+      <th>Country</th>
+      <th>Account balance</th>
+      <th>Transfer tax</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let footballTeam of footballTeams">
+      <td>{{footballTeam.id}}</td>
+      <td>{{footballTeam.name}}</td>
+      <td>{{footballTeam.country}}</td>
+      <td>{{footballTeam.accountBalance}}</td>
+      <td>{{footballTeam.transferTax}}%</td>
+      <td>
+        <button class="btn btn-info" (click)="updateFootballTeam(footballTeam.id)">update</button>
+        <button class="btn btn-danger" (click)="deleteFootballTeam(footballTeam.id)" style="margin-left: 10px; margin-right: 10px">delete</button>
+        <button class="btn btn-info" (click)="footballTeamDetails(footballTeam.id)">details</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

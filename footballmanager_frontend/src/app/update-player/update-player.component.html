@@ -1,0 +1,76 @@
+<div class="col-md-6 offset-md-3">
+  <h3>Update the player</h3>
+
+  <form (ngSubmit)="onSubmit()">
+
+    <div class="mb-3">
+      <label for="fullName">Full name</label>
+      <input #fullName="ngModel" required pattern=".*[^0-9].*" minlength="4" placeholder="required" type="text" class="form-control" id="fullName" [(ngModel)] = "player.fullName" name="fullName">
+      <div *ngIf="fullName.invalid && fullName.dirty" class="alert alert-danger">
+        <div *ngIf="fullName.errors?.['required']">
+          Cannot be empty
+        </div>
+        <div *ngIf="fullName.errors?.['pattern']">
+          Cannot contain only numbers
+        </div>
+        <div *ngIf="fullName.errors?.['minlength']">
+          Full name must be at least 4 characters
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="age">Age</label>
+      <input #age="ngModel" required max="65" min="18" placeholder="required" type="number" class="form-control" id="age" [(ngModel)] = "player.age" name="age">
+      <div *ngIf="age.invalid && age.dirty" class="alert alert-danger">
+        <div *ngIf="age.errors?.['required']">
+          Cannot be empty
+        </div>
+        <div *ngIf="age.errors?.['min']">
+          Cannot be less than 18
+        </div>
+        <div *ngIf="age.errors?.['max']">
+          Cannot be greater than 65
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="monthsOfExperience">Months of experience</label>
+      <input #monthsOfExperience="ngModel" required max="564" min="0" placeholder="required" type="number" class="form-control" id="monthsOfExperience" [(ngModel)] = "player.monthsOfExperience" name="monthsOfExperience">
+      <div *ngIf="monthsOfExperience.invalid && monthsOfExperience.dirty" class="alert alert-danger">
+        <div *ngIf="monthsOfExperience.errors?.['required']">
+          Cannot be empty
+        </div>
+        <div *ngIf="monthsOfExperience.errors?.['min']">
+          Cannot be negative
+        </div>
+        <div *ngIf="monthsOfExperience.errors?.['max']">
+          Cannot be greater than 564
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="nationality">Nationality</label>
+      <input #nationality="ngModel" required pattern="[^0-9]+" minlength="3" maxlength="25" placeholder="required" type="text" class="form-control" id="nationality" [(ngModel)] = "player.nationality" name="nationality">
+      <div *ngIf="nationality.invalid && nationality.dirty" class="alert alert-danger">
+        <div *ngIf="nationality.errors?.['required']">
+          Cannot be empty
+        </div>
+        <div *ngIf="nationality.errors?.['pattern']">
+          Cannot contain numbers
+        </div>
+        <div *ngIf="nationality.errors?.['minlength']">
+          Nationality must be at least 3 characters
+        </div>
+        <div *ngIf="nationality.errors?.['maxlength']">
+          Nationality can't be longer than 25 characters
+        </div>
+      </div>
+    </div>
+
+    <button [disabled]="fullName.invalid || age.invalid || monthsOfExperience.invalid || nationality.invalid" class="btn btn-primary" type="submit">Submit</button>
+
+  </form>
+</div>

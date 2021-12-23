@@ -1,0 +1,64 @@
+<div class="col-md-6 offset-md-3">
+  <h3>Update the football team</h3>
+
+  <form (ngSubmit)="onSubmit()" action="">
+
+    <div class="mb-3">
+      <label for="name">Name</label>
+      <input #name="ngModel" required pattern=".*[^0-9].*" placeholder="required" type="text" class="form-control" id="name" [(ngModel)] = "footballTeam.name" name="name">
+      <div *ngIf="name.invalid && name.dirty" class="alert alert-danger">
+        <div *ngIf="name.errors?.['required']" >
+          Cannot be empty
+        </div>
+        <div *ngIf="name.errors?.['pattern']" >
+          Cannot contain only numbers
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="country">Country</label>
+      <input #country="ngModel" required pattern="[^0-9]+" maxlength="25" placeholder="required" type="text" class="form-control" id="country" [(ngModel)] = "footballTeam.country" name="country">
+      <div *ngIf="country.invalid && country.dirty" class="alert alert-danger">
+        <div *ngIf="country.errors?.['required']" >
+          Cannot be empty
+        </div>
+        <div *ngIf="country.errors?.['pattern']" >
+          Cannot contain numbers
+        </div>
+        <div *ngIf="country.errors?.['maxlength']" >
+          Maximum length 25 characters
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="accountBalance">Account balance</label>
+      <input #accountBalance="ngModel" required min="0" placeholder="required" type="number" class="form-control" id="accountBalance" [(ngModel)] = "footballTeam.accountBalance" name="accountBalance">
+      <div *ngIf="accountBalance.invalid && accountBalance.dirty" class="alert alert-danger">
+        <div *ngIf="accountBalance.errors?.['required']" >
+          Cannot be empty
+        </div>
+        <div *ngIf="accountBalance.errors?.['min']" >
+          Cannot be negative
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="transferTax">Transfer tax (0-10%)</label>
+      <input #transferTax="ngModel" required max="10" min="0" placeholder="required" type="number" class="form-control" id="transferTax" [(ngModel)] = "footballTeam.transferTax" name="transferTax">
+      <div *ngIf="transferTax.invalid && transferTax.dirty" class="alert alert-danger">
+        <div *ngIf="transferTax.errors?.['required']" >
+          Cannot be empty
+        </div>
+        <div *ngIf="transferTax.errors?.['min'] || transferTax.errors?.['max']" >
+          Value must be in the range 0-10
+        </div>
+      </div>
+    </div>
+
+    <button [disabled]="name.invalid || country.invalid || accountBalance.invalid || transferTax.invalid" class="btn btn-primary" type="submit">Submit</button>
+
+  </form>
+</div>

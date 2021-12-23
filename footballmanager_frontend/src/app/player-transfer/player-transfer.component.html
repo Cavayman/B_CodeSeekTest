@@ -1,0 +1,17 @@
+<div class="col-md-6 offset-md-3">
+  <h3>Choose new team</h3>
+
+
+  <p *ngIf="error" class="alert alert-danger">{{error}}</p>
+
+  <form (ngSubmit)="onSubmit()">
+
+    <p><select [(ngModel)]="newTeamId" name="newTeamId" id="newTeamId">
+      <option  *ngFor="let footballTeam of footballTeams" [ngValue]="footballTeam.id" >{{footballTeam.name}}</option>
+    </select></p>
+
+    <button class="btn btn-primary" type="submit">Submit</button>
+
+  </form>
+
+</div>

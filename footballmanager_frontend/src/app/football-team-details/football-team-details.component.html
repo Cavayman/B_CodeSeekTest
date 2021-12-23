@@ -1,0 +1,30 @@
+<h2 style="color: black">List of players</h2>
+
+<button routerLink="/createPlayer/{{teamId}}" routerLinkActive="active" class="btn btn-info">Create player</button>
+
+<table class="table table-striped">
+  <thead>
+  <tr>
+    <th>Id</th>
+    <th>Full name</th>
+    <th>Age</th>
+    <th>Months of experience</th>
+    <th>Nationality</th>
+    <th>Actions</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let player of players">
+    <td>{{player.id}}</td>
+    <td>{{player.fullName}}</td>
+    <td>{{player.age}}</td>
+    <td style="padding-left: 5.5%">{{player.monthsOfExperience}}</td>
+    <td>{{player.nationality}}</td>
+    <td>
+      <button class="btn btn-info" (click)="updatePlayer(teamId, player.id)">update</button>
+      <button class="btn btn-danger" (click)="deletePlayer(player.id)" style="margin-left: 10px; margin-right: 10px">delete</button>
+      <button class="btn btn-dark" (click)="playerTransfer(teamId, player.id)">transfer</button>
+    </td>
+  </tr>
+  </tbody>
+</table>
