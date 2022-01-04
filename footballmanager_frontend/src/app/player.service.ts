@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {Player} from "./player";
@@ -10,16 +10,12 @@ export class PlayerService {
   private baseUrl = "http://localhost:8080/players";
   constructor(private httpClient: HttpClient) { }
 
-  public getPlayers(teamId: number): Observable<Player[]> {
-    return this.httpClient.get<Player[]>(`${this.baseUrl}/all/${teamId}`);
-  }
-
   public getPlayerById(id: number): Observable<Player> {
     return this.httpClient.get<Player>(`${this.baseUrl}/${id}`);
   }
 
-  public createPlayer(teamId: number, player: Player): Observable<Player> {
-    return this.httpClient.post<Player>(`${this.baseUrl}/${teamId}`, player);
+  public createPlayer(player: Player): Observable<Player> {
+    return this.httpClient.post<Player>(`${this.baseUrl}`, player);
   }
 
   public updatePlayer(id: number, player: Player): Observable<Object> {
@@ -30,7 +26,7 @@ export class PlayerService {
     return this.httpClient.delete(`${this.baseUrl}/${id}`);
   }
 
-  public playerTransfer(newTeamId: number, player: Player): Observable<Object> {
-    return this.httpClient.post(`${this.baseUrl}/transfer/${newTeamId}`, player);
+  public playerTransfer(playerId: number, newTeamId: number): Observable<Object> {
+    return this.httpClient.post(`${this.baseUrl}/${playerId}/transfer/${newTeamId}`, null);
   }
 }

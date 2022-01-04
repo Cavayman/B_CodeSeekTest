@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Player} from "../player";
 import {PlayerService} from "../player.service";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -21,13 +21,13 @@ export class CreatePlayerComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.player);
+    this.player.teamId = this.teamId;
     this.savePlayer();
   }
 
   savePlayer() {
-    this.playerService.createPlayer(this.teamId, this.player).subscribe({
-      next: value => this.goToPlayerList(this.teamId),
+    this.playerService.createPlayer(this.player).subscribe({
+      next: () => this.goToPlayerList(this.teamId),
       error: err => console.log(err)
     });
   }

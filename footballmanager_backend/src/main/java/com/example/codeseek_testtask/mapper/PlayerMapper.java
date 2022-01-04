@@ -1,16 +1,30 @@
 package com.example.codeseek_testtask.mapper;
 
-import com.example.codeseek_testtask.model.DTO.PlayerTO;
 import com.example.codeseek_testtask.model.Player;
+import com.example.codeseek_testtask.model.dto.PlayerDTO;
 
 public class PlayerMapper {
-    public static PlayerTO toDto(Player player) {
-        int id = player.getId();
-        String fullName = player.getFullName();
-        int age = player.getAge();
-        short monthsOfExperience = player.getMonthsOfExperience();
-        String nationality = player.getNationality();
+    public static PlayerDTO toDto(Player player) {
+        PlayerDTO playerDTO = new PlayerDTO();
 
-        return new PlayerTO(id, fullName, age, monthsOfExperience, nationality);
+        playerDTO.setId(player.getId());
+        playerDTO.setFullName(player.getFullName());
+        playerDTO.setAge(player.getAge());
+        playerDTO.setMonthsOfExperience(player.getMonthsOfExperience());
+        playerDTO.setNationality(player.getNationality());
+
+        return playerDTO;
+    }
+
+    public static Player toEntity(PlayerDTO playerDTO) {
+        Player player = new Player();
+
+        player.setId(playerDTO.getId());
+        player.setFullName(playerDTO.getFullName());
+        player.setAge(playerDTO.getAge());
+        player.setMonthsOfExperience(playerDTO.getMonthsOfExperience());
+        player.setNationality(playerDTO.getNationality());
+
+        return player;
     }
 }

@@ -4,4 +4,5 @@ export class Player {
   age!: number;
   monthsOfExperience!: number;
   nationality!: string;
+  teamId: number;
 }

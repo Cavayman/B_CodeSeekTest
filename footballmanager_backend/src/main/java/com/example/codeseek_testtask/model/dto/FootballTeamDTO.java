@@ -1,23 +1,24 @@
-package com.example.codeseek_testtask.model;
+package com.example.codeseek_testtask.model.dto;
 
-import javax.persistence.*;
-import java.io.Serializable;
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Set;
 
-@Entity
-@Table(name = "football_teams")
-public class FootballTeam implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class FootballTeamDTO {
     private int id;
+    @NotBlank(message = "Cannot be empty")
     private String teamName;
+    @NotBlank(message = "Cannot be empty")
+    @Pattern(regexp = "[^0-9]*", message = "Cannot contain numbers")
+    @Length(max = 25, message = "Maximum length 25 characters")
     private String country;
+    @NotNull(message = "Account balance cannot be null")
+    @Min(value = 0, message = "Account balance cannot be negative")
     private BigDecimal accountBalance;
+    @Min(value = 0, message = "Value must be in the range 0-10")
+    @Max(value = 10, message = "Value must be in the range 0-10")
     private float transferTax;
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "team", orphanRemoval = true)
-    private Set<Player> players = new HashSet<>();
 
     public int getId() {
         return id;
@@ -57,21 +58,5 @@ public class FootballTeam implements Serializable {
 
     public void setTransferTax(float transferTax) {
         this.transferTax = transferTax;
-    }
-
-    public Set<Player> getPlayers() {
-        return players;
-    }
-
-    @Override
-    public String toString() {
-        return "FootballTeam{" +
-                "id=" + id +
-                ", name='" + teamName + '\'' +
-                ", country='" + country + '\'' +
-                ", accountBalance=" + accountBalance +
-                ", transferTax=" + transferTax +
-                ", players=" + players.toString() +
-                '}';
     }
 }

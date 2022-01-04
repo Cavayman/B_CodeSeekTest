@@ -1,20 +1,27 @@
-package com.example.codeseek_testtask.model;
+package com.example.codeseek_testtask.model.dto;
 
-import javax.persistence.*;
-import java.io.Serializable;
+import org.hibernate.validator.constraints.Length;
 
-@Entity
-@Table(name = "players")
-public class Player implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
+
+public class PlayerDTO {
     private int id;
+    @Length(min = 4, message = "Full name must be at least 4 characters")
     private String fullName;
+    @Min(value = 18, message = "Cannot be less than 18")
+    @Max(value = 65, message = "Cannot be greater than 65")
     private int age;
+    @Min(value = 0, message = "Cannot be negative")
+    @Max(value = 564, message = "Cannot be greater than 564")
     private short monthsOfExperience;
+    @Pattern(regexp = "[^0-9]*", message = "Cannot contain numbers")
+    @Length(min = 3, message = "Nationality must be at least 3 characters")
+    @Length(max = 25, message = "Nationality can't be longer than 25 characters")
     private String nationality;
-    @ManyToOne
-    private FootballTeam team;
+    @Min(value = 0, message = "Cannot be negative")
+    private int teamId;
 
     public int getId() {
         return id;
@@ -56,23 +63,7 @@ public class Player implements Serializable {
         this.nationality = nationality;
     }
 
-    public FootballTeam getTeam() {
-        return team;
-    }
-
-    public void setTeam(FootballTeam team) {
-        this.team = team;
-    }
-
-    @Override
-    public String toString() {
-        return "Player{" +
-                "id=" + id +
-                ", fullName='" + fullName + '\'' +
-                ", age=" + age +
-                ", monthsOfExperience=" + monthsOfExperience +
-                ", nationality='" + nationality + '\'' +
-                ", team=" + team.getTeamName() +
-                '}';
+    public int getTeamId() {
+        return teamId;
     }
 }

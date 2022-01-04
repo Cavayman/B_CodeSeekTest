@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {FootballTeam} from "./football-team";
+import {Player} from "./player";
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,10 @@ export class FootballTeamService {
 
   public getFootballTeamById(teamId: number): Observable<FootballTeam> {
     return this.httpClient.get<FootballTeam>(`${this.baseUrl}/${teamId}`);
+  }
+
+  public getPlayers(teamId: number): Observable<Player[]> {
+    return this.httpClient.get<Player[]>(`${this.baseUrl}/${teamId}/players`);
   }
 
   public createFootballTeam(footballTeam: FootballTeam): Observable<FootballTeam> {
