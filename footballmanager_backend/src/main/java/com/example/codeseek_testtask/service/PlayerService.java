@@ -1,28 +1,30 @@
 package com.example.codeseek_testtask.service;
 
+import com.example.codeseek_testtask.exception.NotEnoughMoneyException;
+import com.example.codeseek_testtask.exception.PlayerAlreadyExistsException;
+import com.example.codeseek_testtask.exception.PlayerNotFoundException;
+import com.example.codeseek_testtask.exception.TheSameTeamException;
+import com.example.codeseek_testtask.mapper.PlayerMapper;
 import com.example.codeseek_testtask.model.FootballTeam;
 import com.example.codeseek_testtask.model.Player;
+import com.example.codeseek_testtask.model.dto.PlayerDTO;
 import com.example.codeseek_testtask.repository.FootballTeamRepository;
 import com.example.codeseek_testtask.repository.PlayerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Service
 public class PlayerService {
+    private static final int COEFFICIENT = 100000;
     private final PlayerRepository playerRepository;
     private final FootballTeamRepository teamRepository;
     private final FootballTeamService teamService;
 
-    @Autowired
     public PlayerService(PlayerRepository playerRepository,
                          FootballTeamRepository teamRepository,
                          FootballTeamService teamService) {
@@ -31,107 +33,91 @@ public class PlayerService {
         this.teamService = teamService;
     }
 
-    public List<Player> findPlayersByTeam(Integer teamId) {
-        if (teamService.findTeam(teamId) == null) return null;
+    public PlayerDTO savePlayer(PlayerDTO playerDTO) {
+        FootballTeam team = teamService.findTeam(playerDTO.getTeamId());
+        Player newPlayer = PlayerMapper.toEntity(playerDTO);
 
-        /**
-         * There are 2 options for how this could be done
-         * I liked the 2nd one more
-         * since it doesn't depend on the teamService and FootballTeam entity
-         * even if we consider that it's slower
-         */
-
-//        return teamService.findTeam(teamId).getPlayers().stream()
-//                .sorted(Comparator.comparingInt(Player::getId))
-//                .collect(Collectors.toList());
-
-        return playerRepository.findAll().stream()
-                .filter(player -> player.getTeam().getId() == teamId)
-                .sorted(Comparator.comparingInt(Player::getId))
-                .collect(Collectors.toList());
-    }
-
-    public Player savePlayer(Player player, Integer teamId) {
-        FootballTeam team = teamService.findTeam(teamId);
-        if (team == null || exists(player)) {
-            return null;
+        if (exists(newPlayer)) {
+            throw new PlayerAlreadyExistsException(String.format("The player with name %s already exists",
+                    newPlayer.getFullName()));
         } else {
-            team.getPlayers().add(player);
-            player.setTeam(team);
-            return playerRepository.save(player);
+            newPlayer.setTeam(team);
+            return PlayerMapper.toDto(playerRepository.save(newPlayer));
         }
     }
 
-    public Player updatePlayer(Integer id, Player changedPlayer) {
-        Player playerToUpdate = this.findPlayer(id);
+    public PlayerDTO updatePlayer(int id, PlayerDTO changedPlayerDTO) {
+        Player playerToUpdate = playerRepository.findById(id)
+                .orElseThrow(() -> new PlayerNotFoundException(String.format("The player with id %d not found", id)));
 
-        if (playerToUpdate == null) {
-            return null;
-        }
-
-        playerToUpdate.setFullName(changedPlayer.getFullName());
-        playerToUpdate.setAge(changedPlayer.getAge());
-        playerToUpdate.setMonthsOfExperience(changedPlayer.getMonthsOfExperience());
-        playerToUpdate.setNationality(changedPlayer.getNationality());
+        playerToUpdate.setFullName(changedPlayerDTO.getFullName());
+        playerToUpdate.setAge(changedPlayerDTO.getAge());
+        playerToUpdate.setMonthsOfExperience(changedPlayerDTO.getMonthsOfExperience());
+        playerToUpdate.setNationality(changedPlayerDTO.getNationality());
 
         if (exists(playerToUpdate)) {
-            return null;
+            throw new PlayerAlreadyExistsException(String.format("The player with name %s already exists",
+                    playerToUpdate.getFullName()));
         } else {
-            return playerRepository.save(playerToUpdate);
+            return PlayerMapper.toDto(playerRepository.save(playerToUpdate));
         }
     }
 
-    public Player  findPlayer(Integer id) {
-        return playerRepository.findById(id).orElse(null);
+    public PlayerDTO findPlayer(int id) {
+        Player player = playerRepository.findById(id)
+                .orElseThrow(() -> new PlayerNotFoundException(String.format("The player with id %d not found", id)));
+        return PlayerMapper.toDto(player);
     }
 
-    public void deletePlayer(Player player) {
-        playerRepository.delete(player);
+    public void deletePlayer(int id) {
+        Player playerToDelete = playerRepository.findById(id)
+                .orElseThrow(() -> new PlayerNotFoundException(String.format("The player with id %d not found", id)));
+        playerRepository.delete(playerToDelete);
     }
 
-    public boolean exists(Player player) {
+    private boolean exists(Player player) {
         ExampleMatcher matcher = ExampleMatcher.matchingAll()
                 .withIgnorePaths("id")
                 .withIgnoreCase();
 
         Example<Player> example = Example.of(player, matcher);
-
         return playerRepository.exists(example);
     }
 
     @Transactional(rollbackOn = {Exception.class})
-    public ResponseEntity<?> playerTransfer(Integer newTeamId, Player player) {
-        Player playerToTransfer = findPlayer(player.getId());
+    public void playerTransfer(int playerId, int newTeamId) {
+        Player playerToTransfer = playerRepository.findById(playerId)
+                .orElseThrow(() -> new PlayerNotFoundException(String.format("The player with id %d not found", playerId)));
 
-        if (playerToTransfer == null)
-            return new ResponseEntity<>("We didn't find such a player", HttpStatus.NOT_FOUND);
-
-        FootballTeam oldFootballTeam = teamService.findTeam(playerToTransfer.getTeam().getId());
+        FootballTeam oldFootballTeam = playerToTransfer.getTeam();
         FootballTeam newFootballTeam = teamService.findTeam(newTeamId);
 
-        if (oldFootballTeam == null || newFootballTeam == null || oldFootballTeam.getId() == newFootballTeam.getId())
-            return new ResponseEntity<>("We didn't find such a team", HttpStatus.NOT_FOUND);
+        if (oldFootballTeam.getId() == newFootballTeam.getId())
+            throw new TheSameTeamException("Transfer to the same team");
 
-        int transferPrice = (playerToTransfer.getMonthsOfExperience() * 100000) / playerToTransfer.getAge();
-        int priceWithTax = (int) (transferPrice + ((transferPrice / 100.0) * oldFootballTeam.getTransferTax()));
+        BigDecimal transferPrice = BigDecimal.valueOf(playerToTransfer.getMonthsOfExperience())
+                .multiply(BigDecimal.valueOf(COEFFICIENT))
+                .divide(BigDecimal.valueOf(playerToTransfer.getAge()), RoundingMode.HALF_UP);
+
+        BigDecimal priceWithTax = transferPrice
+                .divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP)
+                .multiply(BigDecimal.valueOf(oldFootballTeam.getTransferTax()))
+                .add(transferPrice);
 
         //check transaction opportunity
-        int newTeamBalance = newFootballTeam.getAccountBalance();
-        if (newTeamBalance < priceWithTax)
-            return new ResponseEntity<>("The team " + newFootballTeam.getName() + " doesn't have enough money for the transfer", HttpStatus.NOT_FOUND);
+        BigDecimal newTeamBalance = newFootballTeam.getAccountBalance();
+        if (newTeamBalance.compareTo(priceWithTax) < 0)
+            throw new NotEnoughMoneyException(String.format("The team %s doesn't have enough money for the transfer",
+                    newFootballTeam.getTeamName()));
 
         //transfer
-        oldFootballTeam.getPlayers().remove(playerToTransfer);
         playerToTransfer.setTeam(newFootballTeam);
-        newFootballTeam.getPlayers().add(playerToTransfer);
 
         //transaction
-        newFootballTeam.setAccountBalance(newTeamBalance - priceWithTax);
-        oldFootballTeam.setAccountBalance(oldFootballTeam.getAccountBalance() + priceWithTax);
+        newFootballTeam.setAccountBalance(newTeamBalance.subtract(priceWithTax));
+        oldFootballTeam.setAccountBalance(oldFootballTeam.getAccountBalance().add(priceWithTax));
 
         teamRepository.save(oldFootballTeam);
         teamRepository.save(newFootballTeam);
-
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
