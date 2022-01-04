@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {PlayerService} from "../player.service";
 import {Player} from "../player";
+import {FootballTeamService} from "../football-team.service";
 
 @Component({
   selector: 'app-football-team-details',
@@ -10,10 +11,11 @@ import {Player} from "../player";
 })
 export class FootballTeamDetailsComponent implements OnInit {
   teamId!: number;
-  players!: Player[];
+  players: Player[] = [];
 
   constructor(private route: ActivatedRoute,
               private playerService: PlayerService,
+              private teamService: FootballTeamService,
               private router: Router) { }
 
   ngOnInit(): void {
@@ -22,14 +24,10 @@ export class FootballTeamDetailsComponent implements OnInit {
   }
 
   getFootballTeamDetails(teamId: number) {
-    this.playerService.getPlayers(teamId).subscribe({
+    this.teamService.getPlayers(teamId).subscribe({
       next: value => this.players = value,
       error: err => console.log(err)
     });
-  }
-
-  createPlayer(teamId: number) {
-    this.router.navigate(['createPlayer', teamId]);
   }
 
   updatePlayer(teamId: number, id: number) {
@@ -38,7 +36,7 @@ export class FootballTeamDetailsComponent implements OnInit {
 
   deletePlayer(id: number) {
     this.playerService.deletePlayer(id).subscribe({
-      next: value => this.getFootballTeamDetails(this.teamId),
+      next: () => this.getFootballTeamDetails(this.teamId),
       error: err => console.log(err)
     });
   }

@@ -5,13 +5,10 @@
 
     <div class="mb-3">
       <label for="name">Name</label>
-      <input #name="ngModel" required pattern=".*[^0-9].*" placeholder="required" type="text" class="form-control" id="name" [(ngModel)] = "footballTeam.name" name="name">
+      <input #name="ngModel" required placeholder="required" type="text" class="form-control" id="name" [(ngModel)] = "footballTeam.teamName" name="name">
       <div *ngIf="name.invalid && name.dirty" class="alert alert-danger">
         <div *ngIf="name.errors?.['required']" >
           Cannot be empty
-        </div>
-        <div *ngIf="name.errors?.['pattern']" >
-          Cannot contain only numbers
         </div>
       </div>
     </div>

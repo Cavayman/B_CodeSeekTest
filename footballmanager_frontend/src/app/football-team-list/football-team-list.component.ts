@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FootballTeam} from "../football-team";
 import {FootballTeamService} from "../football-team.service";
 import {Router} from "@angular/router";
@@ -9,7 +9,7 @@ import {Router} from "@angular/router";
   styleUrls: ['./football-team-list.component.css']
 })
 export class FootballTeamListComponent implements OnInit {
-  footballTeams!: FootballTeam[];
+  footballTeams: FootballTeam[] = [];
 
   constructor(private footballTeamService: FootballTeamService,
               private router: Router) { }
@@ -24,7 +24,7 @@ export class FootballTeamListComponent implements OnInit {
 
   deleteFootballTeam(id: number) {
     this.footballTeamService.deleteFootballTeam(id).subscribe({
-      next: value => this.getFootballTeams(),
+      next: () => this.getFootballTeams(),
       error: err => console.log(err)
     });
   }

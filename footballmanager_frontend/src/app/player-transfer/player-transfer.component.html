@@ -2,16 +2,16 @@
   <h3>Choose new team</h3>
 
 
-  <p *ngIf="error" class="alert alert-danger">{{error}}</p>
+  <p *ngIf="error?.message" class="alert alert-danger">{{error?.message}}</p>
 
-  <form (ngSubmit)="onSubmit()">
+    <form class="player-transfer" (ngSubmit)="onSubmit()">
 
-    <p><select [(ngModel)]="newTeamId" name="newTeamId" id="newTeamId">
-      <option  *ngFor="let footballTeam of footballTeams" [ngValue]="footballTeam.id" >{{footballTeam.name}}</option>
-    </select></p>
+      <select [(ngModel)]="newTeamId" name="newTeamId" id="newTeamId">
+        <option  *ngFor="let footballTeam of footballTeams" [ngValue]="footballTeam.id" >{{footballTeam.teamName}}</option>
+      </select>
 
-    <button class="btn btn-primary" type="submit">Submit</button>
+      <button class="btn btn-primary" type="submit">Submit</button>
 
-  </form>
+    </form>
 
 </div>

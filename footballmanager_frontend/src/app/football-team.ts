@@ -1,6 +1,6 @@
 export class FootballTeam {
   id!: number;
-  name!: string;
+  teamName!: string;
   country!: string;
   accountBalance!: number;
   transferTax!: number;

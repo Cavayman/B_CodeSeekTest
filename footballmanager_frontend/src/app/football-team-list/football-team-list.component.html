@@ -2,7 +2,7 @@
 
 <button routerLink="/createFootballTeam" routerLinkActive="active" class="btn btn-info">Create a football team</button>
 
-<table class="table table-striped">
+<table *ngIf="footballTeams.length; else noTeams" class="table table-striped">
   <thead>
     <tr>
       <th>Id</th>
@@ -16,7 +16,7 @@
   <tbody>
     <tr *ngFor="let footballTeam of footballTeams">
       <td>{{footballTeam.id}}</td>
-      <td>{{footballTeam.name}}</td>
+      <td>{{footballTeam.teamName}}</td>
       <td>{{footballTeam.country}}</td>
       <td>{{footballTeam.accountBalance}}</td>
       <td>{{footballTeam.transferTax}}%</td>
@@ -28,3 +28,7 @@
     </tr>
   </tbody>
 </table>
+
+<ng-template #noTeams>
+  <h3 style="text-align: center">There are no teams yet</h3>
+</ng-template>

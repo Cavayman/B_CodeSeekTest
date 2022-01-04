@@ -2,7 +2,7 @@
 
 <button routerLink="/createPlayer/{{teamId}}" routerLinkActive="active" class="btn btn-info">Create player</button>
 
-<table class="table table-striped">
+<table *ngIf="players.length; else noPlayers" class="table table-striped">
   <thead>
   <tr>
     <th>Id</th>
@@ -28,3 +28,7 @@
   </tr>
   </tbody>
 </table>
+
+<ng-template #noPlayers>
+  <h3 style="text-align: center">There are no players yet</h3>
+</ng-template>

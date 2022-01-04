@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {PlayerService} from "../player.service";
-import {Player} from "../player";
 import {FootballTeam} from "../football-team";
 import {FootballTeamService} from "../football-team.service";
 
@@ -12,11 +11,10 @@ import {FootballTeamService} from "../football-team.service";
 })
 export class PlayerTransferComponent implements OnInit {
   id!: number;
-  player!: Player;
   oldTeamId!: number;
   newTeamId!: number;
   footballTeams!: FootballTeam[];
-  error!: [];
+  error: Error;
 
   constructor(private route: ActivatedRoute,
               private playerService: PlayerService,
@@ -27,11 +25,6 @@ export class PlayerTransferComponent implements OnInit {
     this.oldTeamId = this.route.snapshot.params['oldTeamId'];
     this.id = this.route.snapshot.params['id'];
 
-    this.playerService.getPlayerById(this.id).subscribe({
-      next: value => this.player = value,
-      error: err => console.log(err)
-    });
-
     this.footballTeamService.getFootballTeams().subscribe({
       next: value => this.footballTeams = value.filter(footballTeam => footballTeam.id != this.oldTeamId),
       error: err => console.log(err)
@@ -39,13 +32,16 @@ export class PlayerTransferComponent implements OnInit {
   }
 
   onSubmit() {
-    this.playerTransfer(this.newTeamId);
+    this.playerTransfer(this.id, this.newTeamId);
   }
 
-  playerTransfer(newTeamId: number) {
-    this.playerService.playerTransfer(newTeamId, this.player).subscribe({
-      next: value => this.goToPlayerList(this.oldTeamId),
-      error: err => this.error = err.error
+  playerTransfer(playerId: number, newTeamId: number) {
+    this.playerService.playerTransfer(playerId, newTeamId).subscribe({
+      next: () => this.goToPlayerList(this.oldTeamId),
+      error: err => {
+        console.log(err.error)
+        this.error = err.error
+      }
     });
   }
 

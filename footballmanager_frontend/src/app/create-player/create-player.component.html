@@ -5,13 +5,10 @@
 
     <div class="mb-3">
       <label for="fullName">Full name</label>
-      <input #fullName="ngModel" required pattern=".*[^0-9].*" minlength="4" placeholder="required" type="text" class="form-control" id="fullName" [(ngModel)] = "player.fullName" name="fullName">
+      <input #fullName="ngModel" required minlength="4" placeholder="required" type="text" class="form-control" id="fullName" [(ngModel)] = "player.fullName" name="fullName">
       <div *ngIf="fullName.invalid && fullName.dirty" class="alert alert-danger">
         <div *ngIf="fullName.errors?.['required']">
           Cannot be empty
-        </div>
-        <div *ngIf="fullName.errors?.['pattern']">
-          Cannot contain only numbers
         </div>
         <div *ngIf="fullName.errors?.['minlength']">
           Full name must be at least 4 characters
